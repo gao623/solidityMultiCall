@@ -1,7 +1,25 @@
 {
-  "name": "Test-JavaScript",
-  "version": "1.0.0",
-  "main": "multicall.js",
+  "name": "solidity-multicall",
+  "version": "0.0.1",
+  "description": "A blockchain state management library for dapps.",
+  "contributors": [
+    "Shuang Gao <gao.gaoshuang@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "multicall",
+    "solidity",
+    "ethereum",
+    "ethereum-classic",
+    "wanchain",
+    "blockchain"
+  ],
+  "homepage": "https://github.com/gao623/solidityMultiCall.git#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gao623/solidityMultiCall.git"
+  },
+  "main": "index.js",
   "dependencies": {
     "web3": "^1.3.3"
   }

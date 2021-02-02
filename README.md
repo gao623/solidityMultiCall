@@ -1,11 +1,34 @@
 # solidityMultiCall
 
 ## Description
-This is <code>JavaScript</code> sdk only used for solidity contract to access multicall contract to reduce interaction with ethereum, wanchain and so on.
-<p>Example:
+This is <code>JavaScript</code> sdk only used for solidity contract to access multicall contract to reduce interaction with ethereum, ethereum-classic or wanchain and so on.
+
+## package.json
+
+Use library by package.json:
+```
+
+  "dependencies": {
+    ...,
+    "solidity-multicall": "git://github.com/gao623/solidityMultiCall.git",
+    ...
+  },
+```
+
+## Config
+After installation, the multicall can be used to connect to the ethereum|ethereum-classic|wanchain|... server to call multi-method such as getBalance. The default config can be used or custom config parameters can be passed using the option object.
+
+```
+  const SolidityMultiCall = require('solidity-multicall');
+  // host: the ip of node such as "192.168.1.2"
+  // port: the port of node such as 8545
+  const multicall = new SolidityMultiCall("192.168.1.2", 8545);
+```
+
+## Example:
 
 ```bash
-  const SolidityMultiCall = require('SolidityMultiCall');
+  const SolidityMultiCall = require('solidity-multicall');
   const FNX = `0x974ab46969d3d9a4569546051a797729e301d6eb`;
   const calls = [
     {
