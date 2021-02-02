@@ -1,22 +1,12 @@
 const util = require("./util");
 
-const defaultAbi = [
-  {
-    components: [{ type: 'address' }, { type: 'bytes' }],
-    name: 'data',
-    type: 'tuple[]'
-  }
-];
-
 const INSIDE_EVERY_PARENTHESES = /\(.*?\)/g;
 const FIRST_CLOSING_PARENTHESES = /^[^)]*\)/;
 
 class SolidityMultiCall {
   constructor(host, port, options) {
-    options = Object.assign({}, {abi: defaultAbi}, options);
+    options = Object.assign({}, options);
     this.client = util.getClient(host, port);
-    // this.scAddr = scAddr;
-    this.abi = options.abi;
   }
 
   encodeParameter(type, val) {
@@ -39,20 +29,18 @@ class SolidityMultiCall {
     return str.replace(/^0x/, '');
   }
 
-  makeMulticallData(calls) {
-    // console.log("======makeMulticallData before:", JSON.stringify(calls));
+  makeMultiCallData(calls) {
     const values = [
       calls.map(({ target, method, args}) => [
         target,
         this.client.eth.abi.encodeFunctionSignature(method).substr(0, 10) +
           (args && args.length > 0
             ? SolidityMultiCall.strip0x(this.encodeParameters(args.map(a => a[1]), args.map(a => a[0])))
-            : '')
+            : ''
+          )
       ])
     ];
-    // console.log("==========makeMulticallData values:", values)
     const calldata = this.encodeParameters(
-      // this.abi,
       [
         {
           components: [{ type: 'address' }, { type: 'bytes' }],
@@ -62,7 +50,6 @@ class SolidityMultiCall {
       ],
       values
     );
-    // console.log("==========makeMulticallData calldata:", calldata)
     return calldata;
   }
 
@@ -71,12 +58,10 @@ class SolidityMultiCall {
     // const AGGREGATE_SELECTOR = '0x252dba42';
     const AGGREGATE_SELECTOR = this.client.eth.abi.encodeFunctionSignature('aggregate((address,bytes)[])');
     const abiEncodedData = AGGREGATE_SELECTOR + SolidityMultiCall.strip0x(rawData);
-    // console.log("========ethCall abiEncodedData:", abiEncodedData);
     return this.client.eth.call({
       to: scAddr,
       data: abiEncodedData
     });
-
   }
 
   async aggregate(calls, scAddr) {
@@ -92,8 +77,7 @@ class SolidityMultiCall {
       if (argTypes.length !== argValues.length) {
         throw new Error(`Every method argument must have exactly one type.
         Comparing argument types ${JSON.stringify(argTypes)}
-        to argument values ${JSON.stringify(argValues)}.
-      `);
+        to argument values ${JSON.stringify(argValues)}.`);
       }
       const args = argValues.map((argValue, idx) => [argValue, argTypes[idx]]);
       return {
@@ -102,14 +86,11 @@ class SolidityMultiCall {
         target
       };
     });
-    // console.log("========calls:", calls);
 
-    const callDataBytes = this.makeMulticallData(calls);
+    const callDataBytes = this.makeMultiCallData(calls);
     const outerResults = await this.ethCall(scAddr, callDataBytes);
-    // console.log("========ethCall:", !!outerResults, outerResults.length, outerResults);
 
     const outerResultsDecoded = this.decodeParameters(['uint256', 'bytes[]'], outerResults);
-    // console.log("======outerResultsDecoded:", outerResultsDecoded);
     const blockNumber = outerResultsDecoded[0];
     const results = outerResultsDecoded[1];
     if (results.length !== calls.length) {
