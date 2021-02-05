@@ -1,13 +1,9 @@
 const Web3 = require("web3");
 
-function getClient(host, port, options) {
+function getClient(nodeUrl, options) {
   options = Object.assign({}, options);
-  if (!host) {
-    throw new Error("invalid host");
-  }
-  let nodeUrl = `http://${host}`;
-  if (port) {
-    nodeUrl = `${nodeUrl}:${port}`;
+  if (!nodeUrl) {
+    throw new Error("invalid node url");
   }
   return new Web3(new Web3.providers.HttpProvider(nodeUrl));
 }

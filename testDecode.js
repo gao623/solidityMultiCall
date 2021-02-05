@@ -1,4 +1,8 @@
 const SolidityMultiCall = require('./');
+const config = {
+  rpcUrl: 'http://192.168.1.2:8545',
+  multiCallAddress: '0x14095a721Dddb892D6350a777c75396D634A7d97',
+}
 
 let ret = {
   blockNumber: '11645384',
@@ -92,7 +96,7 @@ let b = typeAbi[0];
 b.components.map(item => {var ret = {}; ret[item.name]=item.type;return ret}).forEach(json => s[b.name] = {...s[b.name], ...json})
 typeArray.push([s]);
 
-const multicall = new SolidityMultiCall("192.168.1.2", 8545);
+const multicall = new SolidityMultiCall(config);
 try {
   for (let idx in ret.results) {
     let res = multicall.decodeParameters(typeArray[idx], ret.results[idx])
@@ -122,7 +126,7 @@ try {
 //     "0x000000000000000000000000000000000000000000000000f2f3e96b51679b73",
 //   ],
 // ];
-// const multicall = new SolidityMultiCall("192.168.1.2", 8545);
+// const multicall = new SolidityMultiCall(config);
 // // multicall.decodeParameters(typeArray, ret.results[0])
 // let parsedVals = outerResultsDecoded.reduce((acc, r) => {
 //   console.log("=========acc", acc)

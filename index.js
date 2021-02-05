@@ -4,9 +4,18 @@ const INSIDE_EVERY_PARENTHESES = /\(.*?\)/g;
 const FIRST_CLOSING_PARENTHESES = /^[^)]*\)/;
 
 class SolidityMultiCall {
-  constructor(host, port, options) {
+  constructor(config, options) {
     options = Object.assign({}, options);
-    this.client = util.getClient(host, port);
+    this.options = options;
+    this.client = util.getClient(config.rpcUrl);
+    if (!this.isAddress(config.multiCallAddress)) {
+      throw new Error(`invalid address: ${config.multiCallAddress}`)
+    }
+    this.scAddr = config.multiCallAddress;
+  }
+
+  isAddress(address) {
+    return (/^(0x){1}[0-9a-fA-F]{40}$/i.test(address));
   }
 
   encodeParameter(type, val) {
@@ -22,7 +31,6 @@ class SolidityMultiCall {
   }
 
   decodeParameters(types, vals) {
-    // return this.client.eth.abi.decodeParameters(types, '0x' + vals.replace(/0x/i, ''));
     return this.client.eth.abi.decodeParameters(types, vals);
   }
   static strip0x(str) {
@@ -64,7 +72,8 @@ class SolidityMultiCall {
     });
   }
 
-  async aggregate(calls, scAddr) {
+  async aggregate(calls) {
+    let scAddr = this.scAddr;
     calls = Array.isArray(calls) ? calls : [calls];
 
     calls = calls.map(({ call, target }) => {

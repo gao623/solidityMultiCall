@@ -8,9 +8,13 @@ const wanETH = `0x48344649b9611a891987b2db33faada3ac1d05ec`;
 const FNX = `0x974ab46969d3d9a4569546051a797729e301d6eb`;
 const wanUSDT = `0x3d5950287b45f361774e5fb6e50d70eea06bc167`;
 const wanUSDC = `0x7ff465746e4f47e1cbbb80c864cd7de9f13337fe`;
+const config = {
+  rpcUrl: 'http://192.168.1.2:8545',
+  multiCallAddress: '0x14095a721Dddb892D6350a777c75396D634A7d97',
+}
 
 function testBalance() {
-  const multicall = new SolidityMultiCall("192.168.1.2", 8545);
+  const multicall = new SolidityMultiCall(config);
   const calls = [
     {
       target: wanBTC,
@@ -34,7 +38,7 @@ function testBalance() {
     },
   ];
 
-  multicall.aggregate(calls, "0x14095a721Dddb892D6350a777c75396D634A7d97").then((ret)=>{
+  multicall.aggregate(calls).then((ret)=>{
     console.log("result", ret);
     let typeArrays = [["uint256"], ["uint256"], ["uint256"], ["uint256"], ["uint256"]];
     for (let idx in ret.results) {
@@ -147,8 +151,8 @@ function testStoremanInfo() {
   returnTypes.push(smgTypeArray);
   returnTypes.push(balanceTypesArray);
 
-  const multicall = new SolidityMultiCall("192.168.1.2", 8545);
-  multicall.aggregate(calls, "0x14095a721Dddb892D6350a777c75396D634A7d97").then((ret)=>{
+  const multicall = new SolidityMultiCall(config);
+  multicall.aggregate(calls).then((ret)=>{
     console.log("result", ret);
     
     for (let idx in ret.results) {
@@ -309,8 +313,8 @@ function testStoremanGroupInfo() {
   returnTypes.push(smgTypeArray);
   returnTypes.push(balanceTypesArray);
 
-  const multicall = new SolidityMultiCall("192.168.1.2", 8545);
-  multicall.aggregate(calls, "0x14095a721Dddb892D6350a777c75396D634A7d97").then((ret)=>{
+  const multicall = new SolidityMultiCall(config);
+  multicall.aggregate(calls).then((ret)=>{
     console.log("result", ret);
     for (let idx in ret.results) {
       let res = multicall.decodeParameters(returnTypes[idx], ret.results[idx])
